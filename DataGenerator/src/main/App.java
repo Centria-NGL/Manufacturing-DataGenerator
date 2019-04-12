@@ -10,11 +10,29 @@ import java.time.format.DateTimeFormatter;
 
 public class App 
 {
+	// File path variables
+	static String tank_path = "C:/path_to_file/file_name.csv";
+	static String paste_path = "C:/path_to_file/file_name.csv";
+	static String stand_path = "C:/path_to_file/file_name.csv";
+	static String sep_path = "C:/path_to_file/file_name.csv";
+	static String hgen_path = "C:/path_to_file/file_name.csv";
+	static String pkg_path = "C:/path_to_file/file_name.csv";
+	static String batch_path = "C:/path_to_file/file_name.csv";
+	static String tanktd_path = "C:/path_to_file/file_name.csv";
+	static String pastetd_path = "C:/path_to_file/file_name.csv";
+	static String standtd_path = "C:/path_to_file/file_name.csv";
+	static String septd_path = "C:/path_to_file/file_name.csv";
+	static String hgentd_path = "C:/path_to_file/file_name.csv";
+	static String pkgtd_path = "C:/path_to_file/file_name.csv";
+	
     public static void main( String[] args ) throws Exception
     {
     	// Generating an array of batch codes
-        int[] bcodes = createRandomNumbersWithoutDuplicates(100000, 999999, 10000);
+        int[] bcodes = createRandomNumbersWithoutDuplicates(100000, 999999, 30000);
     	List<Batch> batches = new ArrayList<>();
+    	
+    	// Array of manufacturers
+    	String[] mans = {"ABB", "Demaco", "LEWA", "Sacmi", "Toscotec"};
     	
     	List<Test> tests = new ArrayList<>();
     	
@@ -35,15 +53,15 @@ public class App
     	List<PackagingTD> packaging_td = new ArrayList<>();
     	
     	// Generating the machine date
-    	standardizations = generateStandardization();
-    	separations = generateSeparation();
-    	tanks = generateTank();
-    	pasteurizations = generatePasteurization();
-    	homogenizations = generateHomogenization();
-    	packagings = generatePackaging();
+    	standardizations = generateStandardization(mans);
+    	separations = generateSeparation(mans);
+    	tanks = generateTank(mans);
+    	pasteurizations = generatePasteurization(mans);
+    	homogenizations = generateHomogenization(mans);
+    	packagings = generatePackaging(mans);
     	
     	// For loop for generating transactional data
-    	for(int i = 1; i < 10001; i++) {
+    	for(int i = 1; i < 30001; i++) {
     		HoldingTankTD tank_data = new HoldingTankTD();
     		HoldingTankTD last_tank = new HoldingTankTD();
     		
@@ -65,7 +83,7 @@ public class App
     		
     		Batch b = new Batch();
     		Batch last_b = new Batch();
-    		LocalDate d = createRandomDate(1980, 1990);
+    		LocalDate d = createRandomDate(2000, 2001);
     		
     		
     		if(batches != null && !batches.isEmpty()) {
@@ -119,6 +137,20 @@ public class App
     		// Change machine's maintenance date if running code is not 1
     		// We check if the transactional data's batch id exists in batches list
     		// if it exists, we take the batches entry date and change machine's maintenance date to the entry date
+    		if(tank_data.getCode() != 1) {
+    			for(Tank ta : tanks) {
+    				if(ta.getId() == tank_data.getTid()) {
+    					LocalDate dt = null;
+    					for(Batch bat : batches) {
+    						if(tank_data.getBid() == bat.getId()) {
+    							dt = bat.getEntry();
+    						}
+    					}
+    					ta.setMaint(dt);
+    				}
+    			}
+    		}
+    		
     		if(sep.getRunningCode() != 1) {
     			for(Separation s : separations) {
     				if(s.getId() == sep.getSid()) {
@@ -256,13 +288,14 @@ public class App
     
     // function for generating holding tank machine data
     // returns a list of Tank objects
-    public static List<Tank> generateTank() throws Exception{
+    public static List<Tank> generateTank(String[] man) {
         List<Tank> tanks = new ArrayList<>();
         
         for(int i = 1; i < 6; i++) {
         	int id = i;
         	LocalDate date = createRandomDate(1980, 1985);
-        	String manu = "Testi";
+        	int rnd = createRandom(0, 4);
+        	String manu = man[rnd];
         	String serial = null;
         	LocalDate maint = createRandomDate(1989, 1990);
         	boolean check = true;
@@ -286,13 +319,14 @@ public class App
     
     // function for generating pasteurization machine data
     // returns a list of Pasteurization objects
-    public static List<Pasteurization> generatePasteurization() {
+    public static List<Pasteurization> generatePasteurization(String[] man) {
         List<Pasteurization> pasteurizations = new ArrayList<>();
         
         for(int i = 1; i < 6; i++) {
         	int id = i;
         	LocalDate date = createRandomDate(1980, 1985);
-        	String manu = "Testi";
+        	int rnd = createRandom(0, 4);
+        	String manu = man[rnd];
         	String serial = null;
         	LocalDate maint = createRandomDate(1989, 1990);
         	
@@ -317,13 +351,14 @@ public class App
     
     // function for generating standardization machine data
     // returns a list of Standardization objects
-    public static List<Standardization> generateStandardization() {
+    public static List<Standardization> generateStandardization(String[] man) {
         List<Standardization> standardizations = new ArrayList<>();
         
         for(int i = 1; i < 6; i++) {
         	int id = i;
         	LocalDate date = createRandomDate(1980, 1985);
-        	String manu = "Testi";
+        	int rnd = createRandom(0, 4);
+        	String manu = man[rnd];
         	String serial = null;
         	LocalDate maint = createRandomDate(1989, 1990);
         	
@@ -348,13 +383,14 @@ public class App
     
     // function for generating separation machine data
     // returns a list of Separation objects
-    public static List<Separation> generateSeparation() {
+    public static List<Separation> generateSeparation(String[] man) {
         List<Separation> separations = new ArrayList<>();
         
         for(int i = 1; i < 6; i++) {
         	int id = i;
         	LocalDate date = createRandomDate(1980, 1985);
-        	String manu = "Testi";
+        	int rnd = createRandom(0, 4);
+        	String manu = man[rnd];
         	String serial = null;
         	LocalDate maint = createRandomDate(1989, 1990);
         	
@@ -379,13 +415,14 @@ public class App
     
     // function for generating homogenization machine data
     // returns a list of Homogenization objects
-    public static List<Homogenization> generateHomogenization() {
+    public static List<Homogenization> generateHomogenization(String[] man) {
         List<Homogenization> homogenizations = new ArrayList<>();
         
         for(int i = 1; i < 6; i++) {
         	int id = i;
         	LocalDate date = createRandomDate(1980, 1985);
-        	String manu = "Testi";
+        	int rnd = createRandom(0, 4);
+        	String manu = man[rnd];
         	String serial = null;
         	LocalDate maint = createRandomDate(1989, 1990);
         	
@@ -410,13 +447,14 @@ public class App
     
     // function for generating packaging machine data
     // returns a list of Packaging objects
-    public static List<Packaging> generatePackaging() {
+    public static List<Packaging> generatePackaging(String[] man) {
         List<Packaging> packagings = new ArrayList<>();
         
         for(int i = 1; i < 6; i++) {
         	int id = i;
         	LocalDate date = createRandomDate(1980, 1985);
-        	String manu = "Testi";
+        	int rnd = createRandom(0, 4);
+        	String manu = man[rnd];
         	String serial = null;
         	LocalDate maint = createRandomDate(1989, 1990);
         	
@@ -444,12 +482,12 @@ public class App
     // returns Batch object
     public static Batch generateBatches(int b_id, LocalDate d) {
     	// creating a temporary date for entry date
-    	LocalDate entry = createRandomDate(1989, 1990);
+    	LocalDate entry = createRandomDate(2000, 2001);
     	
     	// if the random number is 3, we add a day to the entry date compared to the previous batch
     	// if the number isn't 3, entry date will be the same as the previous batches date
-    	int rnd = createRandom(1, 3);
-    	if(rnd == 3) {
+    	int rnd = createRandom(1, 5);
+    	if(rnd == 5) {
     		entry = d.plusDays(1);
     	}
     	else {
@@ -641,7 +679,7 @@ public class App
     
     public static void writeTanks(List<Tank> tanks) throws Exception {
     	// file path
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = tank_path;
         FileWriter writer = new FileWriter(csvFile);
         
         // format for the dates
@@ -670,7 +708,7 @@ public class App
     
     public static void writePasteurizations(List<Pasteurization> pasteurizations) throws Exception {
     	
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = paste_path;
         FileWriter writer = new FileWriter(csvFile);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
        
@@ -697,7 +735,7 @@ public class App
     
     public static void writeStandardizations(List<Standardization> standardizations) throws Exception {
     	
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = stand_path;
         FileWriter writer = new FileWriter(csvFile);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         
@@ -724,7 +762,7 @@ public class App
     
     public static void writeSeparations(List<Separation> separations) throws Exception {
     	
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = sep_path;
         FileWriter writer = new FileWriter(csvFile);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
        
@@ -751,7 +789,7 @@ public class App
     
     public static void writeHomogenizations(List<Homogenization> homogenizations) throws Exception {
     	
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = hgen_path;
         FileWriter writer = new FileWriter(csvFile);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
        
@@ -777,7 +815,7 @@ public class App
     }
     
     public static void writeTankTD(List<HoldingTankTD> tank_td) throws Exception {
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = tanktd_path;
         FileWriter writer = new FileWriter(csvFile);
     	
     	CSVUtils.writeLine(writer, Arrays.asList("TankID", "BatchID", "RunningCode", "RunningTime", "Capacity", "Temperature"), '	');
@@ -801,7 +839,7 @@ public class App
     
     public static void writePackagings(List<Packaging> packagings) throws Exception {
     	
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = pkg_path;
         FileWriter writer = new FileWriter(csvFile);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         
@@ -825,7 +863,7 @@ public class App
     }
     
     public static void writeBatches(List<Batch> batches) throws Exception {
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = batch_path;
         FileWriter writer = new FileWriter(csvFile);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     	
@@ -849,7 +887,7 @@ public class App
     
     public static void writePasteurizationTD(List<PasteurizationTD> past_td) throws Exception {
     	
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = pastetd_path;
         FileWriter writer = new FileWriter(csvFile);
         
         
@@ -875,7 +913,7 @@ public class App
     }
     
     public static void writeStandardizationTD(List<StandardizationTD> stand_td) throws Exception {
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = stand_path;
         FileWriter writer = new FileWriter(csvFile);
         
         
@@ -900,7 +938,7 @@ public class App
     }
     
     public static void writeSeparationTD(List<SeparationTD> sep_td) throws Exception {
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = septd_path;
         FileWriter writer = new FileWriter(csvFile);
         
         
@@ -926,7 +964,7 @@ public class App
     }
     
     public static void writeHomogenizationTD(List<HomogenizationTD> hgen_td) throws Exception {
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = hgentd_path;
         FileWriter writer = new FileWriter(csvFile);
         
         
@@ -952,7 +990,7 @@ public class App
     }
     
     public static void writePackagingTD(List<PackagingTD> packaging_td) throws Exception {
-    	String csvFile = "C:/path_to_file/file_name.csv";
+    	String csvFile = pkgtd_path;
         FileWriter writer = new FileWriter(csvFile);
         
         
